@@ -1,0 +1,31 @@
+name: Refresh UK charging catalogue
+on:
+  schedule:
+    - cron: '17 3 1 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: charging-catalogue
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download and validate open-licensed UK locations
+        env:
+          OPEN_CHARGE_MAP_API_KEY: ${{ secrets.OPEN_CHARGE_MAP_API_KEY }}
+        run: python3 Scripts/generate_charging_snapshot.py --output charging_snapshot.json
+      - name: Publish validated snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add charging_snapshot.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Refresh open-licensed UK charging catalogue'
+          git push
