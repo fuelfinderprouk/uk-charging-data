@@ -46,13 +46,17 @@ def write_catalogue(rows, output):
         raise ValueError('Unexpectedly small catalogue')
     if any(r.get('country_code') != 'GB' or r.get('party_id') != 'CGY' for r in rows):
         raise ValueError('Unexpected operator identity')
+    source_count = len(rows)
+    rows = [r for r in rows if r.get('publish') is not False and r.get('country') in ('GB', 'GBR')]
+    if len(rows) < 1_000:
+        raise ValueError('Unexpectedly small published UK catalogue')
     if output.exists():
         previous = json.loads(output.read_text())['locations']
         if len(rows) < len(previous) * 0.8:
             raise ValueError('Unexpected catalogue shrinkage; keep previous file')
     payload = dict(schemaVersion=1, countryCode='GB',
                    downloadedAt=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                   source='https://char.gy/open-ocpi/locations', locations=rows)
+                   source='https://char.gy/open-ocpi/locations', sourceRecordCount=source_count, locations=rows)
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(mode='w', dir=output.parent, delete=False) as file:
         json.dump(payload, file, ensure_ascii=False, separators=(',', ':'))
