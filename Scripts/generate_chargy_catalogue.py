@@ -37,7 +37,7 @@ def collect():
             raise ValueError('Incomplete or overfull catalogue')
         # The official endpoint caps pages at 50. Keep this central crawl gentle.
         # HTTP failures (including 403/429) stop the run; never publish a partial file.
-        time.sleep(2)
+        time.sleep(6)
     raise ValueError('Catalogue exceeds pagination safety limit')
 
 
