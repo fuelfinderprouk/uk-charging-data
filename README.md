@@ -31,5 +31,25 @@ retain the applicable attribution and licence conditions.
 Original listings: `https://openchargemap.org/site/poi/details/{ID}`.
 Export API: <https://openchargemap.org/develop/api>.
 
+## char.gy catalogue
+
+`chargy-locations.json` is collected from char.gy's separate official UK PCPR
+open-data feed. It is not OCM data or app source. Attribute char.gy and retain
+its source/update information; the original provider's data terms apply.
+Official documentation:
+<https://help.char.gy/support/solutions/articles/77000576948-public-charge-point-regulations-2023>.
+
+The `chargy.yml` workflow runs daily at 04:43 UTC, with manual dispatch also
+available. The source caps pages at 50, so the collector pauses six seconds
+between requests. It requires a complete successful collection, checks IDs
+and totals, excludes non-public/non-UK records and preserves the previous
+file on errors. The first complete publication was verified on 25 November
+2026: 6,134 public UK location records and 6,136 EVSE records.
+
+No API key is required. This is a dated metadata snapshot, not live socket
+availability: source states such as WORKING and FAULTED must not be interpreted
+as current occupied/free counts. Tariffs are not included; app clients retrieve
+the separate official tariff feed and retain its qualifications and unknowns.
+
 The snapshot is available at:
 <https://raw.githubusercontent.com/fuelfinderprouk/uk-charging-data/main/charging_snapshot.json>

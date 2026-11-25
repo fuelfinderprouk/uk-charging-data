@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate collector
+        run: python3 -m unittest discover -s Scripts/tests -p 'test_generate_chargy_catalogue.py'
       - name: Collect complete official catalogue
         run: python3 Scripts/generate_chargy_catalogue.py --output chargy-locations.json
       - name: Publish validated catalogue
